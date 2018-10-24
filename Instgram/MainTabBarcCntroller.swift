@@ -27,8 +27,11 @@ class MainTabBarController: UITabBarController {
     func featchuser(){
         let ref = Database.database().reference()
         guard let uid = Auth.auth().currentUser?.uid else {return}
-        ref.child("users").child("uid").observeSingleEvent(of: .value, with: { (snapshot) in
+        ref.child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             print(snapshot.value ?? "")
+            guard let dictionary = snapshot.value as? [String: Any] else {return}
+            let username = dictionary["username"] as? String
+            self.navigationItem.title = username
         }) { (err) in
             print("failed to feach user data : \(err)")
         }
