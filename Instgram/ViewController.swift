@@ -150,18 +150,19 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         guard let username = userTextField.text, username.characters.count > 0 else {return}
         guard let password = passwordTextField.text, password.characters.count > 0 else {return}
 
-        var ref: DatabaseReference!
-        ref = Database.database().reference()
-        let userid = Auth.auth().currentUser?.uid
         
+
         Auth.auth().createUser(withEmail: email, password: password) { (user , error) in
             
             if let err = error{
                 print("not saved \(err)")
                 return
-            }
+            }else{
+            
+            var ref: DatabaseReference!
+            ref = Database.database().reference()
+            let userid = Auth.auth().currentUser?.uid
             print("saved  \(String(describing: userid!))")
-        }
         
         
         if let profileimage = self.plusPhotoButton.imageView?.image , let imagedata = UIImageJPEGRepresentation(profileimage, 0.1){
@@ -180,7 +181,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                     
                     let profilePicUrl = url?.absoluteString
                     let newuser = ref.child("users").child(userid!)
+                    print("the userid is \(userid) & the new user is \(newuser)")
+
                     newuser.setValue(["username": self.userTextField.text!, "mail":self.emailTextField.text!,"userImage":profilePicUrl])
+                    
+                    print("the new user after set value is \(newuser)")
+
                     
                     
                 })
@@ -190,10 +196,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             })
         }
         
+            }
+            
+        }
         
-        
-        let newuser = ref.child("users").child(userid!)
-        newuser.setValue(["username": self.userTextField.text!, "mail":self.emailTextField.text!])
         
         }
     
